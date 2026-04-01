@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { STORAGE_BUCKET } from "@/lib/constants/config";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -53,8 +52,7 @@ export async function POST(request: NextRequest) {
   const ext = file.name.split(".").pop() ?? "jpg";
   const path = `${slug}/${position}-${Date.now()}.${ext}`;
 
-  const adminClient = createAdminClient();
-  const { error } = await adminClient.storage
+  const { error } = await supabase.storage
     .from(STORAGE_BUCKET)
     .upload(path, file, { upsert: true, contentType: file.type });
 
@@ -65,7 +63,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { data: urlData } = adminClient.storage
+  const { data: urlData } = supabase.storage
     .from(STORAGE_BUCKET)
     .getPublicUrl(path);
 

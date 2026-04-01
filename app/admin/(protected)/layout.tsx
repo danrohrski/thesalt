@@ -42,14 +42,6 @@ export default async function AdminLayout({
         </Link>
 
         <div className="flex items-center gap-6">
-          <Link
-            href="/admin/recipes/new"
-            className="text-sm tracking-widest uppercase font-[family-name:var(--font-display)] transition-opacity hover:opacity-70"
-            style={{ color: "#c4622d", textDecoration: "none" }}
-          >
-            + New Recipe
-          </Link>
-
           <form action={signOut}>
             <button
               type="submit"

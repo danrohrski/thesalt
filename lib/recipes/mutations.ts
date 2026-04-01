@@ -31,7 +31,7 @@ export async function createRecipe(
       tips: data.tips ?? null,
       photo_primary: data.photo_primary ?? null,
       photo_secondary: data.photo_secondary ?? null,
-      published: false,
+      published: true,
     })
     .select()
     .single();
