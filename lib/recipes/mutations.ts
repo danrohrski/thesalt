@@ -102,6 +102,18 @@ export async function updateRecipe(
   return recipe as Recipe;
 }
 
+export async function setPublished(
+  slug: string,
+  published: boolean,
+  supabase: SupabaseClient
+): Promise<void> {
+  const { error } = await supabase
+    .from("recipes")
+    .update({ published })
+    .eq("slug", slug);
+  if (error) throw new Error(`Failed to update recipe: ${error.message}`);
+}
+
 export async function deleteRecipe(
   slug: string,
   supabase: SupabaseClient

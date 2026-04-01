@@ -1,6 +1,32 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getAllRecipesAdmin } from "@/lib/recipes/queries";
+import { setPublished, deleteRecipe } from "@/lib/recipes/mutations";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { StatusSelect } from "@/components/admin/StatusSelect";
+import { DeleteButton } from "@/components/admin/DeleteButton";
+
+async function togglePublished(formData: FormData) {
+  "use server";
+  const slug = formData.get("slug") as string;
+  const published = formData.get("published") === "true";
+  const supabase = await createClient();
+  await setPublished(slug, published, supabase);
+  revalidatePath("/admin");
+  revalidatePath("/");
+  revalidatePath(`/recipes/${slug}`);
+}
+
+async function removeRecipe(formData: FormData) {
+  "use server";
+  const slug = formData.get("slug") as string;
+  const supabase = await createClient();
+  await deleteRecipe(slug, supabase);
+  revalidatePath("/admin");
+  revalidatePath("/");
+  redirect("/admin");
+}
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
@@ -82,23 +108,24 @@ export default async function AdminDashboard() {
                 >
                   {recipe.view_count.toLocaleString()}
                 </td>
-                <td
-                  className="py-4 pr-4 text-xs tracking-wide uppercase font-[family-name:var(--font-display)]"
-                  style={{
-                    color: recipe.published ? "#c4622d" : "#232120",
-                    opacity: recipe.published ? 1 : 0.4,
-                  }}
-                >
-                  {recipe.published ? "Live" : "Draft"}
+                <td className="py-4 pr-4">
+                  <StatusSelect
+                    slug={recipe.slug}
+                    published={recipe.published}
+                    action={togglePublished}
+                  />
                 </td>
                 <td className="py-4 text-right">
-                  <Link
-                    href={`/admin/recipes/${recipe.slug}/edit`}
-                    className="text-sm font-[family-name:var(--font-display)] tracking-wide transition-opacity hover:opacity-70"
-                    style={{ color: "#c4622d", textDecoration: "none" }}
-                  >
-                    Edit
-                  </Link>
+                  <div className="inline-flex items-center gap-4">
+                    <Link
+                      href={`/admin/recipes/${recipe.slug}/edit`}
+                      className="text-sm font-[family-name:var(--font-display)] tracking-wide transition-opacity hover:opacity-70"
+                      style={{ color: "#c4622d", textDecoration: "none" }}
+                    >
+                      Edit
+                    </Link>
+                    <DeleteButton slug={recipe.slug} action={removeRecipe} />
+                  </div>
                 </td>
               </tr>
             ))}

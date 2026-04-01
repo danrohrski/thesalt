@@ -2,7 +2,12 @@ import slugify from "slugify";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export function generateSlug(title: string): string {
-  return slugify(title, { lower: true, strict: true }).slice(0, 60);
+  const slug = slugify(title, { lower: true, strict: true });
+  if (slug.length <= 80) return slug;
+  // Trim at the last word boundary before 80 chars so we never cut mid-word
+  const trimmed = slug.slice(0, 80);
+  const lastHyphen = trimmed.lastIndexOf("-");
+  return lastHyphen > 20 ? trimmed.slice(0, lastHyphen) : trimmed;
 }
 
 export async function ensureUniqueSlug(

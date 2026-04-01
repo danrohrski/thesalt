@@ -1,18 +1,19 @@
 import { createClient } from "@supabase/supabase-js";
 import { STORAGE_BUCKET } from "@/lib/constants/config";
 
-// Anon client is enough for public URL construction and admin-authed uploads
+// Construct the public URL directly — no client instantiation needed,
+// which avoids spawning a GoTrueClient on every card render.
+export function getPhotoUrl(path: string): string {
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  return `${base}/storage/v1/object/public/${STORAGE_BUCKET}/${path}`;
+}
+
+// Only used server-side (admin delete), so a fresh client here is fine.
 function getStorageClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
-}
-
-export function getPhotoUrl(path: string): string {
-  const supabase = getStorageClient();
-  const { data } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(path);
-  return data.publicUrl;
 }
 
 export async function deletePhoto(
