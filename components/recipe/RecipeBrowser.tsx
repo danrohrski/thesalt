@@ -69,7 +69,7 @@ function RecipeCard({ recipe, hero = false }: { recipe: RecipeWithTags; hero?: b
             {mealTags.map((t) => t.label).join(" · ")}
           </p>
         )}
-        <h2 className={`font-light leading-snug group-hover:opacity-70 transition-opacity ${hero ? "text-2xl" : "text-lg"}`} style={{ fontFamily: "var(--font-display)" }}>
+        <h2 className={`font-semibold leading-snug group-hover:opacity-70 transition-opacity ${hero ? "text-2xl" : "text-lg"}`} style={{ fontFamily: "var(--font-display)" }}>
           {recipe.title}
         </h2>
         {recipe.highlight && (
@@ -130,15 +130,15 @@ export function RecipeBrowser({ recipes }: RecipeBrowserProps) {
   return (
     <div className="flex flex-col min-h-screen">
       <SiteBanner />
-      <header className="flex items-center justify-between px-6 py-4">
-        <h1 className="text-4xl font-light tracking-wide" style={{ fontFamily: "var(--font-display)" }}>The Salt</h1>
+      <header className="flex items-baseline justify-between px-6 py-4">
+        <h1 className="text-4xl font-semibold" style={{ fontFamily: "var(--font-display)" }}>The Salt</h1>
         <p className="text-sm font-light hidden sm:block" style={{ fontFamily: "var(--font-display)", color: "rgba(35,33,32,0.45)" }}>
           A curated recipe collection
         </p>
       </header>
 
       <div style={{ animation: "pageFadeInBack 0.4s ease-out" }}>
-      <div className="sticky top-0 z-10 px-6 pt-8 pb-3" style={{ backgroundColor: "#f2f0eb" }}>
+      <div className="sticky top-0 z-10 px-6 pt-8 pb-3" style={{ backgroundColor: "#ffffff" }}>
         <div className="flex items-center gap-2 flex-wrap">
           {/* Filter chips */}
           {filterTags.map((tag) => {

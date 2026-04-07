@@ -59,10 +59,10 @@ export default async function RecipePage({
       <SiteBanner />
 
       {/* Header — matches the main page */}
-      <header className="flex items-center justify-between px-6 py-4">
+      <header className="flex items-baseline justify-between px-6 py-4">
         <Link
           href="/"
-          className="text-4xl font-light tracking-wide transition-opacity hover:opacity-70"
+          className="text-4xl font-semibold transition-opacity hover:opacity-70"
           style={{ fontFamily: "var(--font-display)", color: "#232120", textDecoration: "none" }}
         >
           The Salt
@@ -99,7 +99,7 @@ export default async function RecipePage({
           </Link>
 
           {/* Title */}
-          <h1 className="text-4xl sm:text-5xl font-light leading-tight mb-4" style={{ fontFamily: "var(--font-display)" }}>
+          <h1 className="text-4xl sm:text-5xl font-semibold leading-tight mb-4" style={{ fontFamily: "var(--font-display)" }}>
             {recipe.title}
           </h1>
 
