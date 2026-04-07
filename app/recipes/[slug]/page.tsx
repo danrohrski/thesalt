@@ -8,6 +8,7 @@ import { SITE_URL, UTM_SOURCE, UTM_MEDIUM, UTM_CAMPAIGN } from "@/lib/constants/
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
+import { SiteBanner } from "@/components/SiteBanner";
 
 export async function generateMetadata({
   params,
@@ -44,6 +45,7 @@ export default async function RecipePage({
 
   const primaryPhotoUrl = recipe.photo_primary ? getPhotoUrl(recipe.photo_primary) : null;
   const secondaryPhotoUrl = recipe.photo_secondary ? getPhotoUrl(recipe.photo_secondary) : null;
+  const heroPhotoUrl = secondaryPhotoUrl ?? primaryPhotoUrl;
   const shareUrl = `${SITE_URL}/recipes/${recipe.slug}?utm_source=${UTM_SOURCE}&utm_medium=${UTM_MEDIUM}&utm_campaign=${UTM_CAMPAIGN}`;
 
   const mealTags = recipe.tags.filter((t) => t.category === "meal_type");
@@ -51,156 +53,141 @@ export default async function RecipePage({
   const seasonTags = recipe.tags.filter((t) => t.category === "season");
   const displayTags = [...mealTags, ...seasonTags, ...dietTags];
 
-  function hostnameOf(url: string) {
-    try { return new URL(url).hostname.replace(/^www\./, ""); } catch { return url; }
-  }
-
   return (
     <main className="min-h-full">
-      {/* Nav */}
-      <nav
-        className="flex items-center justify-between w-full max-w-3xl mx-auto px-6 pt-8"
-      >
+
+      <SiteBanner />
+
+      {/* Header — matches the main page */}
+      <header className="flex items-center justify-between px-6 py-4">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-sm font-light transition-opacity hover:opacity-60"
+          className="text-4xl font-light tracking-wide transition-opacity hover:opacity-70"
           style={{ fontFamily: "var(--font-display)", color: "#232120", textDecoration: "none" }}
         >
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-            <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
           The Salt
         </Link>
-        <ShareButton title={recipe.title} url={shareUrl} />
-      </nav>
+        <p className="text-sm font-light hidden sm:block" style={{ fontFamily: "var(--font-display)", color: "rgba(35,33,32,0.45)" }}>
+          A curated recipe collection
+        </p>
+      </header>
 
-      <article className="w-full max-w-3xl mx-auto px-6 py-10">
-        {/* Tags */}
-        {displayTags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-5">
-            {displayTags.map((tag) => (
-              <Link
-                key={tag.id}
-                href={`/?filter=${tag.slug}`}
-                className="text-xs tracking-widest uppercase px-3 py-1 transition-opacity hover:opacity-70"
-                style={{
-                  fontFamily: "var(--font-display)",
-                  color: tag.category === "meal_type" ? "#c4622d" : "rgba(35,33,32,0.5)",
-                  border: `1px solid ${tag.category === "meal_type" ? "rgba(196,98,45,0.3)" : "rgba(35,33,32,0.15)"}`,
-                  textDecoration: "none",
-                }}
-              >
-                {tag.label}
-              </Link>
-            ))}
+      {/* Side-by-side on desktop, stacked on mobile */}
+      <div className="flex flex-col lg:flex-row lg:items-start" style={{ animation: "pageFadeIn 0.4s ease-out" }}>
+
+        {/* Mobile hero photo */}
+        {heroPhotoUrl && (
+          <div className="lg:hidden w-full overflow-hidden" style={{ aspectRatio: "4/3" }}>
+            <Image src={heroPhotoUrl} alt={recipe.title} width={900} height={675}
+              className="w-full h-full object-cover" priority />
           </div>
         )}
 
-        {/* Title */}
-        <h1
-          className="text-4xl sm:text-5xl font-light leading-tight mb-4"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          {recipe.title}
-        </h1>
+        {/* Left: text content */}
+        <article className="flex-1 px-6 sm:px-10 py-8 lg:pt-8" style={{ maxWidth: "48rem" }}>
 
-        {/* Highlight */}
-        {recipe.highlight && (
-          <p
-            className="text-xl font-light italic leading-relaxed mb-8"
-            style={{
-              fontFamily: "var(--font-display)",
-              color: "rgba(35,33,32,0.7)",
-              borderLeft: "2px solid #c4622d",
-              paddingLeft: "1rem",
-            }}
+          {/* Back */}
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-sm font-light mb-8 transition-opacity hover:opacity-60"
+            style={{ fontFamily: "var(--font-display)", color: "rgba(35,33,32,0.5)", textDecoration: "none" }}
           >
-            {recipe.highlight}
-          </p>
-        )}
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Back
+          </Link>
 
-        {/* Primary photo */}
-        {primaryPhotoUrl && (
-          <div className="w-full overflow-hidden mb-10" style={{ aspectRatio: "16/9" }}>
-            <Image
-              src={primaryPhotoUrl}
-              alt={recipe.title}
-              width={1200}
-              height={675}
-              className="w-full h-full object-cover"
-              priority
-            />
-          </div>
-        )}
+          {/* Title */}
+          <h1 className="text-4xl sm:text-5xl font-light leading-tight mb-4" style={{ fontFamily: "var(--font-display)" }}>
+            {recipe.title}
+          </h1>
 
-        {/* Write-up */}
-        {recipe.writeup && (
-          <div className="mb-10">
+          {/* Highlight */}
+          {recipe.highlight && (
             <p
-              className="text-xs tracking-widest uppercase mb-4"
-              style={{ fontFamily: "var(--font-display)", color: "#c4622d" }}
+              className="text-xl font-light italic leading-relaxed mb-8"
+              style={{ fontFamily: "var(--font-display)", color: "rgba(35,33,32,0.7)", borderLeft: "2px solid #c4622d", paddingLeft: "1rem" }}
             >
-              Write-up
+              {recipe.highlight}
             </p>
-            <ProseMarkdown>{recipe.writeup}</ProseMarkdown>
-          </div>
-        )}
+          )}
 
-        {/* Secondary photo */}
-        {secondaryPhotoUrl && (
-          <div className="w-full overflow-hidden mb-10" style={{ aspectRatio: "4/3" }}>
-            <Image
-              src={secondaryPhotoUrl}
-              alt={`${recipe.title} detail`}
-              width={900}
-              height={675}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
+          <hr className="mb-8" style={{ border: "none", borderTop: "1px solid rgba(35,33,32,0.1)" }} />
 
-        {/* Tips */}
-        {recipe.tips && (
-          <div className="mb-10">
-            <p
-              className="text-xs tracking-widest uppercase mb-4"
-              style={{ fontFamily: "var(--font-display)", color: "#c4622d" }}
-            >
-              Tips & Tweaks
-            </p>
-            <ProseMarkdown>{recipe.tips}</ProseMarkdown>
-          </div>
-        )}
+          {/* Write-up */}
+          {recipe.writeup && (
+            <div className="mb-10">
+              <p className="text-xs tracking-widest uppercase mb-4" style={{ fontFamily: "var(--font-display)", color: "#c4622d" }}>
+                Write-up
+              </p>
+              <ProseMarkdown>{recipe.writeup}</ProseMarkdown>
+            </div>
+          )}
 
-        {/* Source CTA */}
-        {recipe.source_url && (
-          <div className="mb-4">
+          {/* Tips */}
+          {recipe.tips && (
+            <div className="mb-10">
+              <p className="text-xs tracking-widest uppercase mb-4" style={{ fontFamily: "var(--font-display)", color: "#c4622d" }}>
+                Tips & Tweaks
+              </p>
+              <ProseMarkdown>{recipe.tips}</ProseMarkdown>
+            </div>
+          )}
+
+          {/* Source CTA */}
+          {recipe.source_url && (
             <a
               href={recipe.source_url}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-3 w-full py-4 text-sm tracking-widest uppercase transition-opacity hover:opacity-80"
-              style={{
-                fontFamily: "var(--font-display)",
-                backgroundColor: "#232120",
-                color: "#f2f0eb",
-                textDecoration: "none",
-              }}
+              style={{ fontFamily: "var(--font-display)", backgroundColor: "#232120", color: "#f2f0eb", textDecoration: "none" }}
             >
-              View Original Recipe
+              Get the Recipe
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                 <path d="M2 6H10M7 3L10 6L7 9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </a>
-            <p
-              className="text-center text-xs mt-2 font-light"
-              style={{ fontFamily: "var(--font-display)", color: "rgba(35,33,32,0.35)" }}
-            >
-              via {hostnameOf(recipe.source_url)}
-            </p>
+          )}
+
+          {/* Tags + Share */}
+          {(displayTags.length > 0) && (
+            <div className="flex flex-wrap items-center gap-2 mt-8">
+              {displayTags.map((tag) => (
+                <Link
+                  key={tag.id}
+                  href={`/?filter=${tag.slug}`}
+                  className="text-xs tracking-widest uppercase px-3 py-1 transition-opacity hover:opacity-70"
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    color: tag.category === "meal_type" ? "#c4622d" : "rgba(35,33,32,0.5)",
+                    border: `1px solid ${tag.category === "meal_type" ? "rgba(196,98,45,0.3)" : "rgba(35,33,32,0.15)"}`,
+                    textDecoration: "none",
+                  }}
+                >
+                  {tag.label}
+                </Link>
+              ))}
+              <div className="ml-auto">
+                <ShareButton title={recipe.title} url={shareUrl} />
+              </div>
+            </div>
+          )}
+        </article>
+
+        {/* Right: sticky photo (desktop only) */}
+        {heroPhotoUrl && (
+          <div
+            className="hidden lg:block"
+            style={{ flex: 1, minWidth: 0, position: "sticky", top: 0, height: "100vh" }}
+          >
+            <div style={{ position: "relative", height: "100%", marginTop: "80px" }}>
+              <Image src={heroPhotoUrl} alt={recipe.title} fill className="object-cover" priority />
+            </div>
           </div>
         )}
-      </article>
+      </div>
     </main>
   );
 }
