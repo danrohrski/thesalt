@@ -32,6 +32,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${cormorant.variable} h-full`}>
+      <head>
+        <link rel="preconnect" href="https://wcooudawqbulwvqycmjj.supabase.co" />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

@@ -77,7 +77,7 @@ export default async function RecipePage({
 
         {/* Mobile hero photo */}
         {heroPhotoUrl && (
-          <div className="lg:hidden w-full overflow-hidden" style={{ aspectRatio: "4/3" }}>
+          <div className="lg:hidden w-full overflow-hidden" style={{ aspectRatio: "4/3", backgroundColor: "#e8e6e1" }}>
             <Image src={heroPhotoUrl} alt={recipe.title} width={900} height={675}
               className="w-full h-full object-cover" priority />
           </div>
@@ -182,7 +182,7 @@ export default async function RecipePage({
             className="hidden lg:block"
             style={{ flex: 1, minWidth: 0, position: "sticky", top: 0, height: "100vh" }}
           >
-            <div style={{ position: "relative", height: "100%", marginTop: "80px" }}>
+            <div style={{ position: "relative", height: "100%", marginTop: "80px", backgroundColor: "#e8e6e1" }}>
               <Image src={heroPhotoUrl} alt={recipe.title} fill className="object-cover" priority />
             </div>
           </div>
